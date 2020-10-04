@@ -1,0 +1,24 @@
+name: Publish Docker
+on:
+  schedule:
+    - cron: "0 1 * * *" # run at 2 AM UTC
+  push:
+    branches: ["*"]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Login to Docker Hub
+        run: |
+          docker login \
+          -u ${{ secrets.DOCKER_USR }} \
+          -p ${{ secrets.DOCKER_PWD }}
+
+      - name: Build Docker image
+        run: docker build -t extrawurst/gr-discord-bot:latest -f Dockerfile .
+
+      - name: Publish Docker image
+        run: docker push extrawurst/gr-discord-bot
